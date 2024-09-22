@@ -1,6 +1,7 @@
 import jax
 import jax.numpy as jnp
-from jax import Array, jit
+from jax import Array
+from jax import jit
 
 
 @jit
