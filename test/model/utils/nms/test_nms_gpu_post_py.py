@@ -13,8 +13,7 @@ def test_nms_gpu_post():
     expected_selection = jnp.array([0, 1], dtype=jnp.int32)
     expected_n_selection = 2
 
-    selection, n_selection = _nms_gpu_post(
-        mask, n_bbox, threads_per_block, col_blocks)
+    selection, n_selection = _nms_gpu_post(mask, n_bbox, threads_per_block, col_blocks)
     print("Actual IoU:", selection[:n_selection])
     print("Expected IoU:", expected_selection)
     print("Actual IoU:", n_selection)
@@ -23,5 +22,5 @@ def test_nms_gpu_post():
     assert n_selection == expected_n_selection
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pytest.main()

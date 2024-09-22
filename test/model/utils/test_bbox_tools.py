@@ -9,8 +9,7 @@ def test_loc2bbox():
     loc = jnp.array([[0, 0, 0, 0], [0, 0, 0, 0]], dtype=jnp.float32)
     dst_bbox = loc2bbox(src_bbox, loc)
     assert jnp.all(
-        dst_bbox == jnp.array(
-            [[0, 0, 10, 10], [10, 20, 30, 40]], dtype=jnp.float32)
+        dst_bbox == jnp.array([[0, 0, 10, 10], [10, 20, 30, 40]], dtype=jnp.float32)
     )
 
 
@@ -18,8 +17,7 @@ def test_bbox2loc():
     src_bbox = jnp.array([[0, 0, 10, 10], [10, 20, 30, 40]], dtype=jnp.float32)
     dst_bbox = jnp.array([[0, 0, 10, 10], [10, 20, 30, 40]], dtype=jnp.float32)
     loc = bbox2loc(src_bbox, dst_bbox)
-    assert jnp.all(loc == jnp.array(
-        [[0, 0, 0, 0], [0, 0, 0, 0]], dtype=jnp.float32))
+    assert jnp.all(loc == jnp.array([[0, 0, 0, 0], [0, 0, 0, 0]], dtype=jnp.float32))
 
 
 def test_bbox_iou():

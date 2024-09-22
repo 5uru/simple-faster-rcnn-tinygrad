@@ -1,4 +1,3 @@
-
 import jax.numpy as jnp
 from jax import jit
 from jax import Array
@@ -76,17 +75,18 @@ def bbox_iou(bbox_a: Array, bbox_b: Array) -> Array:
 
 
 @jit
-def generate_anchor_base(base_size=16, ratios=jnp.array([0.5, 1, 2]),
-                         anchor_scales=jnp.array([8, 16, 32])):
+def generate_anchor_base(
+    base_size=16, ratios=jnp.array([0.5, 1, 2]), anchor_scales=jnp.array([8, 16, 32])
+):
 
-    py = base_size / 2.
-    px = base_size / 2.
+    py = base_size / 2.0
+    px = base_size / 2.0
 
     @jax.vmap
     def compute_anchor(ratio, scale):
         h = base_size * scale * jnp.sqrt(ratio)
-        w = base_size * scale * jnp.sqrt(1. / ratio)
-        return jnp.array([py - h / 2., px - w / 2., py + h / 2., px + w / 2.])
+        w = base_size * scale * jnp.sqrt(1.0 / ratio)
+        return jnp.array([py - h / 2.0, px - w / 2.0, py + h / 2.0, px + w / 2.0])
 
     ratios_mesh, scales_mesh = jnp.meshgrid(ratios, anchor_scales)
     ratios_flat = ratios_mesh.flatten()

@@ -51,10 +51,8 @@ def _non_maximum_suppression_gpu(bbox, thresh, score=None, limit=None):
     threads_per_block = 64
     col_blocks = int(jnp.ceil(n_bbox / threads_per_block))
 
-    mask = _compute_mask(sorted_bbox, thresh, n_bbox,
-                         threads_per_block, col_blocks)
-    selection, n_selection = _nms_gpu_post(
-        mask, n_bbox, threads_per_block, col_blocks)
+    mask = _compute_mask(sorted_bbox, thresh, n_bbox, threads_per_block, col_blocks)
+    selection, n_selection = _nms_gpu_post(mask, n_bbox, threads_per_block, col_blocks)
 
     selection = selection[:n_selection]
     selection = order[selection]
@@ -69,12 +67,12 @@ def _non_maximum_suppression_gpu(bbox, thresh, score=None, limit=None):
 def _compute_mask(bbox, thresh, n_bbox, threads_per_block, col_blocks):
     def body_fun(i, mask):
         cur_box = bbox[i]
-        ious = jax.vmap(lambda x: calculate_iou(cur_box, x))(bbox[i+1:])
+        ious = jax.vmap(lambda x: calculate_iou(cur_box, x))(bbox[i + 1 :])
         t = jnp.where(ious >= thresh, jnp.uint64(1), jnp.uint64(0))
         t = jnp.pad(t, (0, threads_per_block - len(t) % threads_per_block))
         t = t.reshape(-1, threads_per_block)
         t = jnp.bitwise_or.reduce(t << jnp.arange(threads_per_block), axis=1)
-        mask = mask.at[i * col_blocks:(i+1) * col_blocks].set(t)
+        mask = mask.at[i * col_blocks : (i + 1) * col_blocks].set(t)
         return mask
 
     mask = jnp.zeros((n_bbox * col_blocks,), dtype=jnp.uint64)
@@ -91,17 +89,16 @@ def _nms_gpu_post(mask, n_bbox, threads_per_block, col_blocks):
 
         not_removed = jnp.logical_not(remv[nblock] & (1 << inblock))
         selection = jax.lax.cond(
-            not_removed,
-            lambda: selection.at[n_selection].set(i),
-            lambda: selection
+            not_removed, lambda: selection.at[n_selection].set(i), lambda: selection
         )
         n_selection = n_selection + not_removed
 
         index = i * col_blocks
         new_remv = jax.lax.fori_loop(
-            nblock, col_blocks,
+            nblock,
+            col_blocks,
             lambda j, remv: remv.at[j].set(remv[j] | mask[index + j]),
-            remv
+            remv,
         )
 
         return (selection, n_selection, new_remv), None
@@ -110,7 +107,8 @@ def _nms_gpu_post(mask, n_bbox, threads_per_block, col_blocks):
     remv = jnp.zeros((col_blocks,), dtype=jnp.uint64)
 
     (selection, n_selection, _), _ = jax.lax.scan(
-        body_fun, (selection, 0, remv), jnp.arange(n_bbox))
+        body_fun, (selection, 0, remv), jnp.arange(n_bbox)
+    )
 
     return selection, n_selection
 
