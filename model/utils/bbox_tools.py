@@ -8,8 +8,8 @@ from jax import jit
 def loc2bbox(src_bbox: Array, loc: Array) -> Array:
     """
 
-    :param src_bbox: Array: 
-    :param loc: Array: 
+    :param src_bbox: Array:
+    :param loc: Array:
 
     """
     if src_bbox.shape[0] == 0:
@@ -45,8 +45,8 @@ def loc2bbox(src_bbox: Array, loc: Array) -> Array:
 def bbox2loc(src_bbox: Array, dst_bbox: Array) -> Array:
     """
 
-    :param src_bbox: Array: 
-    :param dst_bbox: Array: 
+    :param src_bbox: Array:
+    :param dst_bbox: Array:
 
     """
     height = src_bbox[:, 2] - src_bbox[:, 0]
@@ -74,8 +74,8 @@ def bbox2loc(src_bbox: Array, dst_bbox: Array) -> Array:
 def bbox_iou(bbox_a: Array, bbox_b: Array) -> Array:
     """
 
-    :param bbox_a: Array: 
-    :param bbox_b: Array: 
+    :param bbox_a: Array:
+    :param bbox_b: Array:
 
     """
     if bbox_a.shape[1] != 4 or bbox_b.shape[1] != 4:
@@ -100,11 +100,11 @@ def generate_anchor_base(
 
     :param base_size:  (Default value = 16)
     :param ratios:  (Default value = jnp.array([0.5)
-    :param 1: 
-    :param 2]): 
+    :param 1:
+    :param 2]):
     :param anchor_scales:  (Default value = jnp.array([8)
-    :param 16: 
-    :param 32]): 
+    :param 16:
+    :param 32]):
 
     """
 
@@ -115,8 +115,8 @@ def generate_anchor_base(
     def compute_anchor(ratio, scale):
         """
 
-        :param ratio: 
-        :param scale: 
+        :param ratio:
+        :param scale:
 
         """
         h = base_size * scale * jnp.sqrt(ratio)

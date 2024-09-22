@@ -4,7 +4,7 @@ import jax.numpy as jnp
 
 def non_maximum_suppression(bbox, thresh, score=None, limit=None):
     """Suppress bounding boxes according to their IoUs.
-    
+
     This method checks each bounding box sequentially and selects the bounding
     box if the Intersection over Unions (IoUs) between the bounding box and the
     previously selected bounding boxes is less than :obj:`thresh`. This method
@@ -34,8 +34,8 @@ def non_maximum_suppression(bbox, thresh, score=None, limit=None):
 def _non_maximum_suppression_gpu(bbox, thresh, score=None, limit=None):
     """
 
-    :param bbox: 
-    :param thresh: 
+    :param bbox:
+    :param thresh:
     :param score:  (Default value = None)
     :param limit:  (Default value = None)
 
@@ -71,18 +71,18 @@ def _non_maximum_suppression_gpu(bbox, thresh, score=None, limit=None):
 def _compute_mask(bbox, thresh, n_bbox, threads_per_block, col_blocks):
     """
 
-    :param bbox: 
-    :param thresh: 
-    :param n_bbox: 
-    :param threads_per_block: 
-    :param col_blocks: 
+    :param bbox:
+    :param thresh:
+    :param n_bbox:
+    :param threads_per_block:
+    :param col_blocks:
 
     """
     def body_fun(i, mask):
         """
 
-        :param i: 
-        :param mask: 
+        :param i:
+        :param mask:
 
         """
         cur_box = bbox[i]
@@ -103,17 +103,17 @@ def _compute_mask(bbox, thresh, n_bbox, threads_per_block, col_blocks):
 def _nms_gpu_post(mask, n_bbox, threads_per_block, col_blocks):
     """
 
-    :param mask: 
-    :param n_bbox: 
-    :param threads_per_block: 
-    :param col_blocks: 
+    :param mask:
+    :param n_bbox:
+    :param threads_per_block:
+    :param col_blocks:
 
     """
     def body_fun(carry, i):
         """
 
-        :param carry: 
-        :param i: 
+        :param carry:
+        :param i:
 
         """
         selection, n_selection, remv = carry
@@ -150,8 +150,8 @@ def _nms_gpu_post(mask, n_bbox, threads_per_block, col_blocks):
 def calculate_iou(bbox_a, bbox_b):
     """
 
-    :param bbox_a: 
-    :param bbox_b: 
+    :param bbox_a:
+    :param bbox_b:
 
     """
     top = jnp.maximum(bbox_a[0], bbox_b[0])
