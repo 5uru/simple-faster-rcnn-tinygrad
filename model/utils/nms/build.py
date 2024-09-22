@@ -5,8 +5,9 @@ from distutils.extension import Extension
 
 # ext_modules = [Extension("_nms_gpu_post", ["_nms_gpu_post.pyx"])]
 ext_modules = [
-    Extension(
-        "_nms_gpu_post", ["_nms_gpu_post.pyx"], include_dirs=[numpy.get_include()]
-    )
+    Extension("_nms_gpu_post", ["_nms_gpu_post.pyx"],
+              include_dirs=[numpy.get_include()])
 ]
-setup(name="nms pyx", cmdclass={"build_ext": build_ext}, ext_modules=ext_modules)
+setup(name="nms pyx",
+      cmdclass={"build_ext": build_ext},
+      ext_modules=ext_modules)

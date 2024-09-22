@@ -13,9 +13,8 @@ def test_loc2bbox():
     src_bbox = jnp.array([[0, 0, 10, 10], [10, 20, 30, 40]], dtype=jnp.float32)
     loc = jnp.array([[0, 0, 0, 0], [0, 0, 0, 0]], dtype=jnp.float32)
     dst_bbox = loc2bbox(src_bbox, loc)
-    assert jnp.all(
-        dst_bbox == jnp.array([[0, 0, 10, 10], [10, 20, 30, 40]], dtype=jnp.float32)
-    )
+    assert jnp.all(dst_bbox == jnp.array([[0, 0, 10, 10], [10, 20, 30, 40]],
+                                         dtype=jnp.float32))
 
 
 def test_bbox2loc():
@@ -23,7 +22,8 @@ def test_bbox2loc():
     src_bbox = jnp.array([[0, 0, 10, 10], [10, 20, 30, 40]], dtype=jnp.float32)
     dst_bbox = jnp.array([[0, 0, 10, 10], [10, 20, 30, 40]], dtype=jnp.float32)
     loc = bbox2loc(src_bbox, dst_bbox)
-    assert jnp.all(loc == jnp.array([[0, 0, 0, 0], [0, 0, 0, 0]], dtype=jnp.float32))
+    assert jnp.all(
+        loc == jnp.array([[0, 0, 0, 0], [0, 0, 0, 0]], dtype=jnp.float32))
 
 
 def test_bbox_iou():
@@ -31,9 +31,8 @@ def test_bbox_iou():
     bbox_a = jnp.array([[0, 0, 2, 2], [1, 1, 3, 3]], dtype=jnp.float32)
     bbox_b = jnp.array([[1, 1, 2, 2], [0, 0, 3, 3]], dtype=jnp.float32)
 
-    expected_iou = jnp.array(
-        [[0.25, 0.44444445], [0.25, 0.44444445]], dtype=jnp.float32
-    )
+    expected_iou = jnp.array([[0.25, 0.44444445], [0.25, 0.44444445]],
+                             dtype=jnp.float32)
     result = bbox_iou(bbox_a, bbox_b)
 
     print("Actual IoU:", result)
@@ -59,9 +58,9 @@ def test_generate_anchor_base_small():
         dtype=jnp.float32,
     )
 
-    result = generate_anchor_base(
-        base_size=3, ratios=jnp.array([0.5, 1, 2]), anchor_scales=jnp.array([2, 4, 8])
-    )
+    result = generate_anchor_base(base_size=3,
+                                  ratios=jnp.array([0.5, 1, 2]),
+                                  anchor_scales=jnp.array([2, 4, 8]))
 
     print("Actual Anchors:", result)
     print("Expected Anchors:", expected_anchors)
