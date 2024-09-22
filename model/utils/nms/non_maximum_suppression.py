@@ -4,7 +4,7 @@ import jax.numpy as jnp
 
 def non_maximum_suppression(bbox, thresh, score=None, limit=None):
     """Suppress bounding boxes according to their IoUs.
-
+    
     This method checks each bounding box sequentially and selects the bounding
     box if the Intersection over Unions (IoUs) between the bounding box and the
     previously selected bounding boxes is less than :obj:`thresh`. This method
@@ -13,22 +13,18 @@ def non_maximum_suppression(bbox, thresh, score=None, limit=None):
     If :obj:`score` is not provided as an argument, the bounding box
     is ordered by its index in ascending order.
 
-    Args:
-        bbox (array): Bounding boxes to be transformed. The shape is
+    :param bbox: Bounding boxes to be transformed. The shape is
             :math:`(R, 4)`. :math:`R` is the number of bounding boxes.
-        thresh (float): Threshold of IoUs.
-        score (array): An array of confidences whose shape is :math:`(R,)`.
-        limit (int): The upper bound of the number of the output bounding
+    :type bbox: array
+    :param thresh: Threshold of IoUs.
+    :type thresh: float
+    :param score: An array of confidences whose shape is :math:`(R,)`. (Default value = None)
+    :type score: array
+    :param limit: The upper bound of the number of the output bounding
             boxes. If it is not specified, this method selects as many
-            bounding boxes as possible.
-
-    Returns:
-        array:
-        An array with indices of bounding boxes that are selected. \
-        They are sorted by the scores of bounding boxes in descending \
-        order. \
-        The shape of this array is :math:`(K,)` and its dtype is\
-        :obj:`jnp.int32`. Note that :math:`K \\leq R`.
+            bounding boxes as possible. (Default value = None)
+    :type limit: int
+    :rtype: array
 
     """
     return _non_maximum_suppression_gpu(bbox, thresh, score, limit)
@@ -36,6 +32,14 @@ def non_maximum_suppression(bbox, thresh, score=None, limit=None):
 
 @jax.jit
 def _non_maximum_suppression_gpu(bbox, thresh, score=None, limit=None):
+    """
+
+    :param bbox: 
+    :param thresh: 
+    :param score:  (Default value = None)
+    :param limit:  (Default value = None)
+
+    """
     if len(bbox) == 0:
         return jnp.zeros((0,), dtype=jnp.int32)
 
@@ -65,7 +69,22 @@ def _non_maximum_suppression_gpu(bbox, thresh, score=None, limit=None):
 
 @jax.jit
 def _compute_mask(bbox, thresh, n_bbox, threads_per_block, col_blocks):
+    """
+
+    :param bbox: 
+    :param thresh: 
+    :param n_bbox: 
+    :param threads_per_block: 
+    :param col_blocks: 
+
+    """
     def body_fun(i, mask):
+        """
+
+        :param i: 
+        :param mask: 
+
+        """
         cur_box = bbox[i]
         ious = jax.vmap(lambda x: calculate_iou(cur_box, x))(bbox[i + 1 :])
         t = jnp.where(ious >= thresh, jnp.uint64(1), jnp.uint64(0))
@@ -82,7 +101,21 @@ def _compute_mask(bbox, thresh, n_bbox, threads_per_block, col_blocks):
 
 @jax.jit
 def _nms_gpu_post(mask, n_bbox, threads_per_block, col_blocks):
+    """
+
+    :param mask: 
+    :param n_bbox: 
+    :param threads_per_block: 
+    :param col_blocks: 
+
+    """
     def body_fun(carry, i):
+        """
+
+        :param carry: 
+        :param i: 
+
+        """
         selection, n_selection, remv = carry
         nblock = i // threads_per_block
         inblock = i % threads_per_block
@@ -115,6 +148,12 @@ def _nms_gpu_post(mask, n_bbox, threads_per_block, col_blocks):
 
 @jax.jit
 def calculate_iou(bbox_a, bbox_b):
+    """
+
+    :param bbox_a: 
+    :param bbox_b: 
+
+    """
     top = jnp.maximum(bbox_a[0], bbox_b[0])
     bottom = jnp.minimum(bbox_a[2], bbox_b[2])
     left = jnp.maximum(bbox_a[1], bbox_b[1])

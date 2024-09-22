@@ -7,6 +7,7 @@ from model.utils.bbox_tools import (bbox2loc, bbox_iou, generate_anchor_base,
 
 
 def test_loc2bbox():
+    """ """
     src_bbox = jnp.array([[0, 0, 10, 10], [10, 20, 30, 40]], dtype=jnp.float32)
     loc = jnp.array([[0, 0, 0, 0], [0, 0, 0, 0]], dtype=jnp.float32)
     dst_bbox = loc2bbox(src_bbox, loc)
@@ -16,6 +17,7 @@ def test_loc2bbox():
 
 
 def test_bbox2loc():
+    """ """
     src_bbox = jnp.array([[0, 0, 10, 10], [10, 20, 30, 40]], dtype=jnp.float32)
     dst_bbox = jnp.array([[0, 0, 10, 10], [10, 20, 30, 40]], dtype=jnp.float32)
     loc = bbox2loc(src_bbox, dst_bbox)
@@ -23,6 +25,7 @@ def test_bbox2loc():
 
 
 def test_bbox_iou():
+    """ """
     bbox_a = jnp.array([[0, 0, 2, 2], [1, 1, 3, 3]], dtype=jnp.float32)
     bbox_b = jnp.array([[1, 1, 2, 2], [0, 0, 3, 3]], dtype=jnp.float32)
 
@@ -38,6 +41,7 @@ def test_bbox_iou():
 
 
 def test_generate_anchor_base_small():
+    """ """
     expected_anchors = jnp.array(
         [
             [-0.62132025, -2.7426405, 3.6213202, 5.7426405],

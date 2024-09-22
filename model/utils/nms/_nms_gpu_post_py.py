@@ -3,7 +3,21 @@ import jax.numpy as jnp
 
 
 def _nms_gpu_post(mask, n_bbox, threads_per_block, col_blocks):
+    """
+
+    :param mask: 
+    :param n_bbox: 
+    :param threads_per_block: 
+    :param col_blocks: 
+
+    """
     def body_fun(carry, i):
+        """
+
+        :param carry: 
+        :param i: 
+
+        """
         selection, n_selection, remv = carry
         nblock = i // threads_per_block
         inblock = i % threads_per_block

@@ -6,6 +6,7 @@ from model.utils.nms._nms_gpu_post_py import _nms_gpu_post
 
 
 def test_nms_gpu_post():
+    """ """
     mask = jnp.array([0b101, 0b010, 0b001], dtype=jnp.uint64)
     n_bbox = 3
     threads_per_block = 1

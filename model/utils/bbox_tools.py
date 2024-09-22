@@ -5,6 +5,12 @@ from jax import Array, jit
 
 @jit
 def loc2bbox(src_bbox: Array, loc: Array) -> Array:
+    """
+
+    :param src_bbox: Array: 
+    :param loc: Array: 
+
+    """
     if src_bbox.shape[0] == 0:
         return jnp.zeros((0, 4), dtype=loc.dtype)
 
@@ -36,6 +42,12 @@ def loc2bbox(src_bbox: Array, loc: Array) -> Array:
 
 @jit
 def bbox2loc(src_bbox: Array, dst_bbox: Array) -> Array:
+    """
+
+    :param src_bbox: Array: 
+    :param dst_bbox: Array: 
+
+    """
     height = src_bbox[:, 2] - src_bbox[:, 0]
     width = src_bbox[:, 3] - src_bbox[:, 1]
     ctr_y = src_bbox[:, 0] + 0.5 * height
@@ -59,6 +71,12 @@ def bbox2loc(src_bbox: Array, dst_bbox: Array) -> Array:
 
 
 def bbox_iou(bbox_a: Array, bbox_b: Array) -> Array:
+    """
+
+    :param bbox_a: Array: 
+    :param bbox_b: Array: 
+
+    """
     if bbox_a.shape[1] != 4 or bbox_b.shape[1] != 4:
         raise IndexError
 
@@ -77,12 +95,29 @@ def bbox_iou(bbox_a: Array, bbox_b: Array) -> Array:
 def generate_anchor_base(
     base_size=16, ratios=jnp.array([0.5, 1, 2]), anchor_scales=jnp.array([8, 16, 32])
 ):
+    """
+
+    :param base_size:  (Default value = 16)
+    :param ratios:  (Default value = jnp.array([0.5)
+    :param 1: 
+    :param 2]): 
+    :param anchor_scales:  (Default value = jnp.array([8)
+    :param 16: 
+    :param 32]): 
+
+    """
 
     py = base_size / 2.0
     px = base_size / 2.0
 
     @jax.vmap
     def compute_anchor(ratio, scale):
+        """
+
+        :param ratio: 
+        :param scale: 
+
+        """
         h = base_size * scale * jnp.sqrt(ratio)
         w = base_size * scale * jnp.sqrt(1.0 / ratio)
         return jnp.array([py - h / 2.0, px - w / 2.0, py + h / 2.0, px + w / 2.0])
