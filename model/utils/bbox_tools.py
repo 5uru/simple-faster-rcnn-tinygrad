@@ -4,8 +4,9 @@ from jax import jit
 from jax import Array
 import jax
 
+
 @jit
-def loc2bbox(src_bbox:Array, loc:Array) -> Array:
+def loc2bbox(src_bbox: Array, loc: Array) -> Array:
     if src_bbox.shape[0] == 0:
         return jnp.zeros((0, 4), dtype=loc.dtype)
 
@@ -34,8 +35,9 @@ def loc2bbox(src_bbox:Array, loc:Array) -> Array:
 
     return dst_bbox
 
+
 @jit
-def bbox2loc(src_bbox:Array, dst_bbox:Array) -> Array:
+def bbox2loc(src_bbox: Array, dst_bbox: Array) -> Array:
     height = src_bbox[:, 2] - src_bbox[:, 0]
     width = src_bbox[:, 3] - src_bbox[:, 1]
     ctr_y = src_bbox[:, 0] + 0.5 * height
@@ -57,7 +59,8 @@ def bbox2loc(src_bbox:Array, dst_bbox:Array) -> Array:
 
     return jnp.vstack((dy, dx, dh, dw)).transpose()
 
-def bbox_iou(bbox_a:Array, bbox_b:Array) -> Array:
+
+def bbox_iou(bbox_a: Array, bbox_b: Array) -> Array:
     if bbox_a.shape[1] != 4 or bbox_b.shape[1] != 4:
         raise IndexError
 
@@ -70,6 +73,7 @@ def bbox_iou(bbox_a:Array, bbox_b:Array) -> Array:
     area_a = jnp.prod(bbox_a[:, 2:] - bbox_a[:, :2], axis=1)
     area_b = jnp.prod(bbox_b[:, 2:] - bbox_b[:, :2], axis=1)
     return area_i / (area_a[:, None] + area_b - area_i)
+
 
 @jit
 def generate_anchor_base(base_size=16, ratios=jnp.array([0.5, 1, 2]),

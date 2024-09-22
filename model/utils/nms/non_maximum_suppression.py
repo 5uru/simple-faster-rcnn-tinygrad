@@ -1,6 +1,7 @@
 import jax
 import jax.numpy as jnp
 
+
 def non_maximum_suppression(bbox, thresh, score=None, limit=None):
     """Suppress bounding boxes according to their IoUs.
 
@@ -32,6 +33,7 @@ def non_maximum_suppression(bbox, thresh, score=None, limit=None):
     """
     return _non_maximum_suppression_gpu(bbox, thresh, score, limit)
 
+
 @jax.jit
 def _non_maximum_suppression_gpu(bbox, thresh, score=None, limit=None):
     if len(bbox) == 0:
@@ -49,8 +51,10 @@ def _non_maximum_suppression_gpu(bbox, thresh, score=None, limit=None):
     threads_per_block = 64
     col_blocks = int(jnp.ceil(n_bbox / threads_per_block))
 
-    mask = _compute_mask(sorted_bbox, thresh, n_bbox, threads_per_block, col_blocks)
-    selection, n_selection = _nms_gpu_post(mask, n_bbox, threads_per_block, col_blocks)
+    mask = _compute_mask(sorted_bbox, thresh, n_bbox,
+                         threads_per_block, col_blocks)
+    selection, n_selection = _nms_gpu_post(
+        mask, n_bbox, threads_per_block, col_blocks)
 
     selection = selection[:n_selection]
     selection = order[selection]
@@ -59,6 +63,7 @@ def _non_maximum_suppression_gpu(bbox, thresh, score=None, limit=None):
         selection = selection[:limit]
 
     return selection
+
 
 @jax.jit
 def _compute_mask(bbox, thresh, n_bbox, threads_per_block, col_blocks):
@@ -76,6 +81,7 @@ def _compute_mask(bbox, thresh, n_bbox, threads_per_block, col_blocks):
     mask = jax.lax.fori_loop(0, n_bbox, body_fun, mask)
     return mask
 
+
 @jax.jit
 def _nms_gpu_post(mask, n_bbox, threads_per_block, col_blocks):
     def body_fun(carry, i):
@@ -85,17 +91,17 @@ def _nms_gpu_post(mask, n_bbox, threads_per_block, col_blocks):
 
         not_removed = jnp.logical_not(remv[nblock] & (1 << inblock))
         selection = jax.lax.cond(
-                not_removed,
-                lambda: selection.at[n_selection].set(i),
-                lambda: selection
+            not_removed,
+            lambda: selection.at[n_selection].set(i),
+            lambda: selection
         )
         n_selection = n_selection + not_removed
 
         index = i * col_blocks
         new_remv = jax.lax.fori_loop(
-                nblock, col_blocks,
-                lambda j, remv: remv.at[j].set(remv[j] | mask[index + j]),
-                remv
+            nblock, col_blocks,
+            lambda j, remv: remv.at[j].set(remv[j] | mask[index + j]),
+            remv
         )
 
         return (selection, n_selection, new_remv), None
@@ -103,9 +109,11 @@ def _nms_gpu_post(mask, n_bbox, threads_per_block, col_blocks):
     selection = jnp.zeros((n_bbox,), dtype=jnp.int32)
     remv = jnp.zeros((col_blocks,), dtype=jnp.uint64)
 
-    (selection, n_selection, _), _ = jax.lax.scan(body_fun, (selection, 0, remv), jnp.arange(n_bbox))
+    (selection, n_selection, _), _ = jax.lax.scan(
+        body_fun, (selection, 0, remv), jnp.arange(n_bbox))
 
     return selection, n_selection
+
 
 @jax.jit
 def calculate_iou(bbox_a, bbox_b):
