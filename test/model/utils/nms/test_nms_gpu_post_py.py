@@ -1,6 +1,7 @@
-import pytest
 import jax
 import jax.numpy as jnp
+import pytest
+
 from model.utils.nms._nms_gpu_post_py import _nms_gpu_post
 
 

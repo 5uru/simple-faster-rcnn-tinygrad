@@ -1,7 +1,9 @@
-import pytest
-from model.utils.bbox_tools import loc2bbox, bbox2loc, bbox_iou, generate_anchor_base
 import jax.numpy as jnp
 import numpy.testing as npt
+import pytest
+
+from model.utils.bbox_tools import (bbox2loc, bbox_iou, generate_anchor_base,
+                                    loc2bbox)
 
 
 def test_loc2bbox():
